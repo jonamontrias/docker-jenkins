@@ -22,6 +22,18 @@ COPY resources/entrypoint.sh /entrypoint.sh
 USER root
 RUN chmod +x -R /usr/share/jenkins/ref/adop_scripts/ && chmod +x /entrypoint.sh
 # USER jenkins
+
+RUN apt-get update && apt-get -y install git bzip2 gettext wget autoconf make libtool build-essential python-setuptools python-pip python-wheel
+
+# USER jenkins
+WORKDIR /
+RUN git clone https://github.com/dilshod/xlsx2csv.git
+WORKDIR xlsx2csv
+RUN pip install xlsx2csv
+WORKDIR /
+RUN chown -R jenkins:jenkins /xlsx2csv
+USER jenkins
+RUN cp -avr /xlsx2csv /var/jenkins_home
  
 # Environment variables
 ENV ADOP_LDAP_ENABLED=true ADOP_SONAR_ENABLED=true ADOP_ANT_ENABLED=true ADOP_MAVEN_ENABLED=true ADOP_NODEJS_ENABLED=true ADOP_GERRIT_ENABLED=true
